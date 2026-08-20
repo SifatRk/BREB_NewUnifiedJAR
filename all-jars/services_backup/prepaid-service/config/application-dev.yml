@@ -1,0 +1,36 @@
+spring:
+  datasource:
+#    url: jdbc:oracle:thin:@119.40.92.182:1521/orcl
+#    username: breb
+#    password: "9876"
+    url: jdbc:oracle:thin:@103.138.26.157:45121:BREBDB
+    username: BREB
+    password: Breb@2026
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+#    database-platform: com.breb.vending.config.Oracle11gCompatibleDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+# 1. Print the SQL queries to the log
+logging.level.org.hibernate.SQL: DEBUG
+
+  # 2. Format the SQL statements cleanly across multiple lines
+spring.jpa.properties.hibernate.format_sql: true
+
+  # 3. Print the actual values bound to the SQL '?' placeholders
+logging.level.org.hibernate.orm.jdbc.bind: TRACE
+
+spring.main.allow-circular-references: true
+

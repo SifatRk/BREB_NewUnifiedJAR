@@ -1,0 +1,63 @@
+server:
+  port: 8080
+  netty:
+    max-initial-line-length: 8192
+    max-header-size: 16384
+
+spring:
+  application:
+    name: api-gateway-service
+  codec:
+    max-in-memory-size: 5MB
+
+breb:
+  gateway:
+    cors:
+      allowed-origins:
+        - http://localhost:3000
+        - http://103.138.26.157:8000
+      allowed-origin-patterns: []
+      allow-credentials: false
+    logging:
+      enabled: true
+      log-body-max-bytes: 65536
+      redacted-headers:
+        - authorization
+        - cookie
+        - set-cookie
+      redacted-fields:
+        - password
+        - oldPassword
+        - newPassword
+        - confirmPassword
+        - otp
+        - token
+        - refreshToken
+        - accessToken
+        - idToken
+        - secret
+        - pin
+
+# ==========================================
+# BREB Microservices Configuration
+# ==========================================
+
+# Authentication Service: http://103.129.38.69:8081/swagger-ui/index.html
+breb.auth.service.host: http://103.129.38.69
+breb.auth.service.port: 8081
+
+# Basic Service
+breb.basic.service.host: http://103.129.38.69
+breb.basic.service.port: 8082
+
+# System Service
+breb.system.service.host: http://103.129.38.69
+breb.system.service.port: 8083
+
+# Prepaid Service
+breb.vending.service.host: http://103.129.38.69
+breb.vending.service.port: 8085
+
+# Reports Service
+breb.reports.service.host: http://103.129.38.69
+breb.reports.service.port: 8084

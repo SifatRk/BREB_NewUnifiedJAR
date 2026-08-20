@@ -1,0 +1,91 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: notification-service
+
+  threads:
+    virtual:
+      enabled: true
+
+  datasource:
+    #    url: jdbc:oracle:thin:@119.40.92.182:1521/orcl
+    #    username: breb
+    #    password: "9876"
+    url: jdbc:oracle:thin:@103.138.26.157:45121:BREBDB
+    username: BREB
+    password: Breb@2026
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      maximum-pool-size: 25       # increased from 10 to support parallel batch dispatch (up to 25 concurrent sends)
+      minimum-idle: 2
+      connection-timeout: 20000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1 FROM DUAL
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: com.breb.notification.config.Oracle11gCompatibleDialect
+        jdbc:
+          time_zone: UTC
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:prepaid.breb@gmail.com}
+    password: ${MAIL_PASSWORD:ohrjdnyvfdrxowtl}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+notification:
+  poll-interval-ms: 2000          # scheduler fires every 2 s (fixedDelay — next tick after previous finishes)
+  batch-size: 150                 # max rows claimed per tick (supports ~1000 OTP/min with parallel dispatch)
+  otp-validity-seconds: 120       # OTP expiry window; expired rows are failed immediately, not retried
+  stuck-threshold-minutes: 5      # PROCESSING rows older than this are rescued to PENDING by the reaper
+  reaper-interval-ms: 300000      # reaper check interval (every 5 minutes)
+  retry:
+    backoff-seconds: 30,60        # backoff per attempt index: 1st retry after 30s, 2nd after 60s
+
+# ─── SMS Gateways ────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
+sms:
+  robi:
+    enabled: ${ROBI_SMS_ENABLED:false}
+    # POST endpoint supplied by Robi in your bulk-SMS contract
+    api-url: ${ROBI_SMS_API_URL:https://smsapi.robiaxata.com/sms/v1/send}
+    # Bearer token from your Robi business portal
+    api-key: ${ROBI_SMS_API_KEY:changeme}
+    # Registered sender-ID (must be pre-approved by Robi / BTRC)
+    sender-id: ${ROBI_SMS_SENDER_ID:BREB}
+
+  banglalink:
+    enabled: ${BL_SMS_ENABLED:false}
+    # POST endpoint supplied by Banglalink in your bulk-SMS contract
+    api-url: ${BL_SMS_API_URL:https://bsms.banglalink.net/api/send}
+    # API key from your Banglalink business portal
+    api-key: ${BL_SMS_API_KEY:changeme}
+    # Registered sender-ID (must be pre-approved by Banglalink / BTRC)
+    sender-id: ${BL_SMS_SENDER_ID:BREB}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+
+logging:
+  level:
+    com.breb.notification: INFO
+    org.hibernate.SQL: WARN

@@ -1,0 +1,16 @@
+server:
+  port: 8085
+  servlet:
+    context-path: /prepaid
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: prepaid-service
+  threads:
+    virtual:
+      enabled: true
+  profiles:
+    active: dev
+
